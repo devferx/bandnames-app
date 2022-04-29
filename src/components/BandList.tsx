@@ -4,9 +4,10 @@ import { Band } from "../interfaces/Band";
 
 interface BandListProps {
   data: Band[];
+  voteBand: (id: string) => void;
 }
 
-export const BandList = ({ data }: BandListProps) => {
+export const BandList = ({ data, voteBand }: BandListProps) => {
   const [bands, setBands] = useState(data);
 
   useEffect(() => {
@@ -38,7 +39,9 @@ export const BandList = ({ data }: BandListProps) => {
     return bands.map((band) => (
       <tr key={band.id}>
         <td>
-          <button className="btn btn-primary">+ 1</button>
+          <button className="btn btn-primary" onClick={() => voteBand(band.id)}>
+            +1
+          </button>
         </td>
         <td>
           <input
