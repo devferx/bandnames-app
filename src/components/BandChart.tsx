@@ -1,8 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext, useState } from "react";
 import { Chart, registerables } from "chart.js";
 
+import { SocketContext } from "../context/SocketContext";
+import { Band } from "../interfaces/Band";
+
 export const BandChart = () => {
+  const { socket } = useContext(SocketContext);
+  const [bands, setBands] = useState<Band[]>([]);
   const ctx = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    socket.on("current-bands", (bands: Band[]) => {
+      setBands(bands);
+    });
+
+    return () => {
+      socket.off("current-bands");
+    };
+  }, [socket]);
 
   useEffect(() => {
     Chart.register(...registerables);
@@ -10,11 +25,11 @@ export const BandChart = () => {
     const myChart = new Chart(ctx.current?.getContext("2d")!, {
       type: "bar",
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        labels: bands.map((band) => band.name),
         datasets: [
           {
             label: "# of Votes",
-            data: [12, 19, 3, 5, 2, 3],
+            data: bands.map((band) => band.votes),
             backgroundColor: [
               "rgba(255, 99, 132, 0.2)",
               "rgba(54, 162, 235, 0.2)",
@@ -36,6 +51,7 @@ export const BandChart = () => {
         ],
       },
       options: {
+        animation: false,
         indexAxis: "y",
         scales: {
           x: {
@@ -44,11 +60,10 @@ export const BandChart = () => {
         },
       },
     });
-
     return () => {
       myChart.destroy();
     };
-  }, []);
+  }, [bands]);
 
   return <canvas id="myChart" ref={ctx}></canvas>;
 };
