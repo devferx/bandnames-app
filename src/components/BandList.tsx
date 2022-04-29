@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
-import { SocketContext } from "../context/SocketContext";
 
+import { SocketContext } from "../context/SocketContext";
 import { Band } from "../interfaces/Band";
 
 export const BandList = () => {

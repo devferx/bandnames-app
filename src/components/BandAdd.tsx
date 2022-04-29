@@ -1,18 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { FormEvent } from "react";
 
-interface BandAddProps {
-  createBand: (name: string) => void;
-}
+import { SocketContext } from "../context/SocketContext";
 
-export const BandAdd = ({ createBand }: BandAddProps) => {
+export const BandAdd = () => {
   const [value, setValue] = useState("");
+  const { socket } = useContext(SocketContext);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (value.trim().length <= 0) return;
 
-    createBand(value);
+    socket.emit("create-band", { name: value });
     setValue("");
   };
 
