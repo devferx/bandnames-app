@@ -5,16 +5,17 @@ import { Band } from "../interfaces/Band";
 interface BandListProps {
   data: Band[];
   voteBand: (id: string) => void;
+  deleteBand: (id: string) => void;
 }
 
-export const BandList = ({ data, voteBand }: BandListProps) => {
+export const BandList = ({ data, voteBand, deleteBand }: BandListProps) => {
   const [bands, setBands] = useState(data);
 
   useEffect(() => {
     setBands(data);
   }, [data]);
 
-  const cambioNombre = (
+  const changeBandName = (
     event: ChangeEvent<HTMLInputElement>,
     id: string
   ): void => {
@@ -48,7 +49,7 @@ export const BandList = ({ data, voteBand }: BandListProps) => {
             className="form-control"
             type="text"
             value={band.name}
-            onChange={(event) => cambioNombre(event, band.id)}
+            onChange={(event) => changeBandName(event, band.id)}
             onBlur={() => onFocus(band.id, band.name)}
           />
         </td>
@@ -56,7 +57,12 @@ export const BandList = ({ data, voteBand }: BandListProps) => {
           <h3>{band.votes}</h3>
         </td>
         <td>
-          <button className="btn btn-danger">Borrar</button>
+          <button
+            className="btn btn-danger"
+            onClick={() => deleteBand(band.id)}
+          >
+            Borrar
+          </button>
         </td>
       </tr>
     ));
