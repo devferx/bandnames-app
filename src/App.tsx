@@ -3,6 +3,7 @@ import { connect } from "socket.io-client";
 
 import { BandAdd } from "./components/BandAdd";
 import { BandList } from "./components/BandList";
+import { Band } from "./interfaces/Band";
 
 const connectSocketServer = () => {
   const socket = connect("http://localhost:8082", {
@@ -14,6 +15,7 @@ const connectSocketServer = () => {
 function App() {
   const [socket] = useState(connectSocketServer());
   const [online, setOnline] = useState(false);
+  const [bands, setBands] = useState<Band[]>([]);
 
   useEffect(() => {
     setOnline(socket.connected);
@@ -28,6 +30,13 @@ function App() {
   useEffect(() => {
     socket.on("disconnect", () => {
       setOnline(false);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on("current-bands", (bands: Band[]) => {
+      console.log(bands);
+      setBands(bands);
     });
   }, [socket]);
 
@@ -49,7 +58,7 @@ function App() {
 
       <div className="row">
         <div className="col-8">
-          <BandList />
+          <BandList data={bands} />
         </div>
         <div className="col-4">
           <BandAdd />
