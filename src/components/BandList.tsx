@@ -5,10 +5,16 @@ import { Band } from "../interfaces/Band";
 interface BandListProps {
   data: Band[];
   voteBand: (id: string) => void;
+  updateBandName: (id: string, newName: string) => void;
   deleteBand: (id: string) => void;
 }
 
-export const BandList = ({ data, voteBand, deleteBand }: BandListProps) => {
+export const BandList = ({
+  data,
+  voteBand,
+  updateBandName,
+  deleteBand,
+}: BandListProps) => {
   const [bands, setBands] = useState(data);
 
   useEffect(() => {
@@ -31,9 +37,8 @@ export const BandList = ({ data, voteBand, deleteBand }: BandListProps) => {
     );
   };
 
-  const onFocus = (id: string, name: string) => {
-    console.log("onFocus");
-    // TODO: Disparar el evento de sockets
+  const onBlur = (id: string, name: string) => {
+    updateBandName(id, name);
   };
 
   const createRows = () => {
@@ -50,7 +55,7 @@ export const BandList = ({ data, voteBand, deleteBand }: BandListProps) => {
             type="text"
             value={band.name}
             onChange={(event) => changeBandName(event, band.id)}
-            onBlur={() => onFocus(band.id, band.name)}
+            onBlur={(event) => onBlur(band.id, event.target.value)}
           />
         </td>
         <td>
